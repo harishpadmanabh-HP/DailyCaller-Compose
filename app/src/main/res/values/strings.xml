@@ -1,0 +1,72 @@
+<resources>
+    <string name="app_name">DailyCaller</string>
+    <string name="error_unknown">Unknown Error</string>
+    <string name="error_something_went_wrong">Something went wrong</string>
+    <string name="error_service_unavailable">Service Unavailable. Please try again later</string>
+    <string name="error_network_not_found">Network not found</string>
+    <string name="error_session_expired">Session Expired</string>
+    <string name="error_internet_unavailable">You are offline. Please Check your Internet Connection.</string>
+    <string name="no_news">No news.</string>
+    <string name="no_saved_news">No saved news.</string>
+    <string name="enter_search_key">Please enter a search key.</string>
+    <string name="search">Search</string>
+    <string name="contact_us">Contact Us</string>
+    <string name="send_tip_text">Click Email to send us a tip,\n or email tips@dailycaller.com.</string>
+    <string name="email">Email</string>
+    <string name="privacy_policy">Privacy Policy</string>
+    <string name="delete_account">Delete Account</string>
+    <string name="no_email_app">There are no email app installed on your device.</string>
+    <string name="success_logged_in">You have successfully logged in!</string>
+    <string name="success_logged_out">You have successfully logged out!</string>
+    <string name="show_comment_button">Show comments</string>
+    <string name="click_to_view_documentaries">Click here to see more Daily Caller Documentaries</string>
+
+    <string name="video_error_media_load_timeout">Media loading timed out</string>
+    <string name="video_error_server_unaccessible">Media server was not reachable</string>
+    <string name="video_error_unknown_error">Failed to load video</string>
+
+
+    <!-- Content Description -->
+    <string name="content_desc_menu">Menu</string>
+    <string name="content_back_arrow">Back Arrow</string>
+    <string name="content_desc_close">Close Arrow</string>
+
+    <string name="good_morining">Hi, Good Morning\!</string>
+    <string name="good_afternoon">Hi, Good Afternoon\!</string>
+    <string name="good_evening">Hi, Good Evening\!</string>
+    <string name="good_night">Hi, Good Night\!</string>
+
+    <string name="latest_news"><b>Latest</b> News</string>
+
+    <!-- Queue -->
+    <string name="show_queue">Show Queue</string>
+    <string name="queue_list">Queue</string>
+    <string name="transition_image">transition-image</string>
+    <string name="queue_empty">Queue is empty!</string>
+    <string name="queue_tag_item">queue-tag-item</string>
+    <string name="play_now">Play Now</string>
+    <string name="play_next">Play Next</string>
+    <string name="add_to_queue">Add to Queue</string>
+    <string name="action_clear_queue">Clear Queue</string>
+    <string name="queue_item_added_to_play_next">An item was added to play next</string>
+    <string name="queue_item_added_to_queue">An item was added to the queue</string>
+
+    <string name="media_route_menu_title">Play on&#8230;</string>
+    <string name="action_settings">Settings</string>
+
+    <!-- Preferences -->
+    <string name="prefs_header_application">Application Behavior</string>
+    <string name="prefs_header_application_summary">Control how the application behaves on the TV
+    </string>
+    <string name="prefs_termination_policy_default">0</string>
+    <string name="prefs_termination_policy_dialog_title">When Disconnecting</string>
+    <string name="prefs_volume_title">Volume Assignment</string>
+    <string name="prefs_volume_title_summary">Controls %1$s</string>
+    <string name="prefs_volume_dialog_title">Volume Assignment</string>
+    <string name="prefs_volume_default">device</string>
+    <string name="title_activity_test">TestActivity</string>
+
+    <string name="facebook_app_id">591754301012086</string>
+    <string name="facebook_client_id">8f463f00966f252b2ac79f69b85596f3</string>
+    <string name="fb_login_protocol_scheme">fb591754301012086</string>
+</resources>

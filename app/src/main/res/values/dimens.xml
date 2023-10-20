@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="appbar_logo_width">170dp</dimen>
+    <dimen name="appbar_logo_height">30dp</dimen>
+    <dimen name="appbar_sub_logo_width">80dp</dimen>
+    <dimen name="appbar_sub_logo_height">10dp</dimen>
+    <dimen name="close_button">50dp</dimen>
+    <dimen name="share_button">20dp</dimen>
+    <dimen name="back_button">20dp</dimen>
+    <dimen name="news_size">16sp</dimen>
+    <dimen name="search_size">12sp</dimen>
+    <dimen name="search_Text_size">14sp</dimen>
+    <dimen name="search_Time_size">12sp</dimen>
+    <dimen name="category_Tag_size">12sp</dimen>
+    <dimen name="red_dot_size">10dp</dimen>
+    <dimen name="logo_height">75dp</dimen>
+
+    <dimen name="home_firstItemHeight">200dp</dimen>
+    <dimen name="newsDetailSpacerHeight">180dp</dimen>
+    <dimen name="home_firstItemViewHeight">100dp</dimen>
+    <dimen name="newsDetailViewHeight">80dp</dimen>
+</resources>

@@ -1,0 +1,166 @@
+package com.tsciences.dailycaller.android.ui.menu
+
+import android.content.ActivityNotFoundException
+import android.content.Intent
+import android.net.Uri
+import android.os.Bundle
+import android.util.Log
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.activity.viewModels
+import com.google.gson.Gson
+import com.tsciences.dailycaller.android.FirebaseAnalyticsEvent.EventRegister
+import com.tsciences.dailycaller.android.R
+import com.tsciences.dailycaller.android.appConstants.AppConstants
+import com.tsciences.dailycaller.android.appConstants.AppConstants.DAILY_CALLER_CONTACT
+import com.tsciences.dailycaller.android.appConstants.AppConstants.DELETION_URL
+import com.tsciences.dailycaller.android.appConstants.AppConstants.PRIVACY_POLICY_URL
+import com.tsciences.dailycaller.android.core.theme.DailyCallerTheme
+import com.tsciences.dailycaller.android.core.util.isDeviceTablet
+import com.tsciences.dailycaller.android.ui.commonComponents.rememberSnackbarController
+import com.tsciences.dailycaller.android.ui.newsDetail.NewsDetailActivity
+import dagger.hilt.android.AndroidEntryPoint
+
+@AndroidEntryPoint
+class MenuSectionActivity : ComponentActivity() {
+    private val viewModel: MenuViewModel by viewModels()
+    var menuItemCategory: String? = null
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        menuItemCategory = intent.getStringExtra("menuItemCategory")
+        setContent {
+            val snackbarController = rememberSnackbarController()
+            viewModel.setTabDeviceOrNot(isDeviceTablet(this))
+            DailyCallerTheme {
+                if (menuItemCategory.equals(AppConstants.MENU_ITEM)) {
+                    val menuTag = intent.getStringExtra("menu_tag")
+                    val menuTitle = intent.getStringExtra("menu_title")
+                    val isWebLink = intent.getBooleanExtra("isWebLink", false)
+                    if (!isWebLink) {
+                        if (isDeviceTablet(this)) {
+                            MenuSectionScreenTab(viewModel = viewModel,
+                                menuTerm = menuTag ?: "",
+                                snackbarController = snackbarController,
+                                menuTitle = menuTitle ?: "",
+                                onNewsItemClick = { item ->
+                                    item.encodedString = item.encoded?.text
+                                    val intent = Intent(this, NewsDetailActivity::class.java)
+                                    val newsItem = Gson().toJson(item)
+                                    intent.putExtra("news_item", newsItem)
+                                    intent.putExtra("fromSearch", false)
+                                    startActivity(intent)
+                                })
+                        } else {
+                            MenuSectionScreen(viewModel = viewModel,
+                                menuTerm = menuTag ?: "",
+                                snackbarController = snackbarController,
+                                menuTitle = menuTitle ?: "",
+                                onNewsItemClick = { item ->
+                                    item.encodedString = item.encoded?.text
+                                    val intent = Intent(this, NewsDetailActivity::class.java)
+                                    val newsItem = Gson().toJson(item)
+                                    intent.putExtra("news_item", newsItem)
+                                    intent.putExtra("fromSearch", false)
+                                    startActivity(intent)
+                                })
+                        }
+                    } else {
+                        if ((menuTitle?.uppercase()
+                                .equals("Stream Documentaries".uppercase())) || menuTitle?.uppercase()
+                                .equals("Groomed".uppercase())
+                        ) {
+                            StreamDocumentaryScreen(viewModel = viewModel,
+                                menuTerm = menuTag ?: "",
+                                snackbarController = snackbarController,
+                                menuTitle = menuTitle ?: "",
+                                navigateToVideoScreen = { stream ->
+                                    val promoVideoUrl = stream.videoUrl
+                                    val promoVideoId = promoVideoUrl.substringAfterLast('/', "")
+                                    var fullVideoId =
+                                        stream.fullVideoUrl.substringAfterLast('/', "")
+                                    val fullVideoUrls = stream.fullVideoUrl.split("/")
+                                    if (fullVideoUrls.count() > 3) {
+                                        fullVideoId = fullVideoUrls.get(3)
+                                    }
+                                    val intent = Intent(this, LocalPlayerActivity::class.java)
+                                    intent.putExtra("promoVideoId", promoVideoId)
+                                    intent.putExtra("fullVideoId", fullVideoId)
+                                    intent.putExtra("description", stream.summary)
+                                    intent.putExtra("title", stream.title)
+                                    intent.putExtra("subtitle", stream.name)
+                                    intent.putExtra("shouldStart", false)
+                                    intent.putExtra("image", stream.thumImage)
+                                    startActivity(intent)
+                                })
+                        } else {
+                            MenuWebScreen(
+                                viewModel = viewModel,
+                                menuLink = menuTag.toString(),
+                                snackbarController = snackbarController
+                            )
+                        }
+
+                    }
+                } else if (menuItemCategory.equals(AppConstants.CONTACT)) {
+                    MenuContactScreen(
+                        snackbarController = snackbarController, viewModel = viewModel
+                    ) {
+                        try {
+                            val intent = Intent(Intent.ACTION_SENDTO)
+                            intent.data = Uri.parse("mailto:")
+                            intent.putExtra(Intent.EXTRA_EMAIL, arrayOf(DAILY_CALLER_CONTACT))
+                            startActivity(intent)
+                        } catch (ex: ActivityNotFoundException) {
+                            snackbarController.showSnackbar(getString(R.string.no_email_app))
+                        }
+                    }
+                } else if (menuItemCategory.equals(AppConstants.PRIVACY)) {
+                    MenuPrivacyScreen(snackbarController = snackbarController,
+                        viewModel = viewModel,
+                        onDeleteAccountClick = {
+                            EventRegister().registerEvent(
+                                applicationContext, "Account_Deletion_Viewed", null
+                            )
+                            val browserIntent = Intent(
+                                Intent.ACTION_VIEW, Uri.parse(DELETION_URL)
+                            )
+                            startActivity(browserIntent)
+                        },
+                        onPrivacyPolicyClick = {
+                            EventRegister().registerEvent(
+                                applicationContext, "Privacy_Policy_Viewed", null
+                            )
+                            val browserIntent = Intent(
+                                Intent.ACTION_VIEW, Uri.parse(PRIVACY_POLICY_URL)
+                            )
+                            startActivity(browserIntent)
+                        })
+                } else if (menuItemCategory.equals(AppConstants.SAVED_NEWS)) {
+                    SavedNewsScreen(
+                        snackbarController = snackbarController, viewModel = viewModel
+                    ) { savedNews ->
+                        val intent = Intent(this, NewsDetailActivity::class.java)
+                        val newsItem = viewModel.mapToItem(savedNews)
+                        val newsItemGson = Gson().toJson(newsItem)
+                        intent.putExtra("news_item", newsItemGson)
+                        intent.putExtra("fromSearch", false)
+                        startActivity(intent)
+                    }
+                }
+            }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Log.d("onSave", "onSave")
+        viewModel.getSavedNewsList()
+
+        val bundle = Bundle()
+        bundle.putInt("Offline_News_Screen_Size", viewModel.state.value.savedNews.size)
+
+        EventRegister().registerEvent(applicationContext, "Offline_News_Screen_Viewed", bundle)
+    }
+}
+
+

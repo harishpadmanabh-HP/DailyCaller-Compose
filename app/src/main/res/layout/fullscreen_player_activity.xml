@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <fragment
+        android:id="@+id/cast_mini_controller"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        app:castShowImageThumbnail="true"
+        android:visibility="gone"
+        class="com.google.android.gms.cast.framework.media.widget.MiniControllerFragment" />
+
+    <VideoView
+        android:id="@+id/videoView1"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@+id/toolbar"
+        android:layout_centerInParent="true" />
+
+
+    <RelativeLayout
+        android:layout_alignBottom="@+id/videoView1"
+        android:layout_alignStart="@+id/videoView1"
+        android:layout_alignEnd="@+id/videoView1"
+        android:layout_alignTop="@+id/videoView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" >
+
+        <ImageView
+            android:id="@+id/videoThumbnail"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="fitCenter"
+            android:visibility="gone" />
+
+        <ImageButton
+            android:id="@+id/play_circle"
+            android:src="@drawable/ic_play_circle_white_80dp"
+            android:layout_centerInParent="true"
+
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="play" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/controllers"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/videoView1"
+        android:layout_alignStart="@+id/videoView1"
+        android:layout_alignEnd="@+id/videoView1"
+        android:layout_alignTop="@+id/videoView1"
+        android:visibility="visible"
+        android:background="@drawable/player_bg_gradient_dark" >
+
+        <ProgressBar
+            android:id="@+id/progressBar1"
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:visibility="gone"
+            android:progressTint="@color/teal_200"
+            android:thumbTint="@color/teal_700"/>
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/animation_view"
+            android:layout_width="48.dp"
+            android:layout_height="48.dp"
+            android:layout_centerInParent="true"
+            app:lottie_rawRes="@raw/loading"
+            app:lottie_autoPlay="true"
+            app:lottie_loop="true" />
+
+        <RelativeLayout
+            android:id="@+id/control_bar"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:layout_alignParentBottom="true" >
+
+            <ImageView
+                android:id="@+id/playPauseImageView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:src="@drawable/ic_av_pause_dark"
+                android:contentDescription="playpause" />
+
+            <TextView
+                android:id="@+id/startText"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginStart="5dp"
+                android:layout_toEndOf="@+id/playPauseImageView"
+                android:gravity="center_vertical"
+                android:maxLines="1"
+                android:text="00:00"
+                android:textColor="@color/white" />
+
+            <TextView
+                android:id="@+id/endText"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_alignParentEnd="true"
+                android:layout_marginEnd="16dp"
+                android:gravity="center_vertical"
+                android:maxLines="1"
+                android:text="0:00"
+                android:textColor="@color/white" />
+
+            <SeekBar
+                android:id="@+id/seekBar1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_gravity="center"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_toStartOf="@+id/endText"
+                android:layout_toEndOf="@+id/startText"
+                android:indeterminateTint="@color/teal_700"/>
+        </RelativeLayout>
+    </RelativeLayout>
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:minHeight="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+
+
+
+</RelativeLayout>
