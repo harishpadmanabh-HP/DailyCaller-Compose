@@ -150,27 +150,33 @@ class MenuViewModel @Inject constructor(
         data class SavedNews(val noSavedNews: String) : MenuSectionEvent()
     }
 
-    fun getStreamItems(menuTitle: String) = viewModelScope.launch {
-        isListLoading.update { true }
-        streamRepository.getStreamDocumentaries().apply {
-            isListLoading.update { false }
-            doIfFailure {
-                eventsChannel.send(
-                    MenuSectionEvent.ShowUiMessage(it ?: UiText.unknownError())
-                )
-            }
-            doIfSuccess { streamVideos ->
-                if (menuTitle == "Groomed") {
-                    streams.update { streamVideos.stream.filter { it.slug == "groomed" } }
-                    title.update { "Groomed" }
-                } else {
-                    streams.update { streamVideos.stream }
-                    title.update { "Documentaries" }
+    fun getStreamItems(menuTerm: String, menuTitle: String, seeMoreDocumentaries: Boolean = false) =
+        viewModelScope.launch {
+            isListLoading.update { true }
+            streamRepository.getStreamDocumentaries().apply {
+                isListLoading.update { false }
+                doIfFailure {
+                    eventsChannel.send(
+                        MenuSectionEvent.ShowUiMessage(it ?: UiText.unknownError())
+                    )
                 }
-
+                doIfSuccess { streamVideos ->
+                    if (seeMoreDocumentaries) {
+                        streams.update { streamVideos.stream }
+                        title.update { "Documentaries" }
+                    } else {
+                        val sectionCollection = menuTerm.split("/")
+                        if (sectionCollection.size <= 3) {
+                            streams.update { streamVideos.stream }
+                            title.update { "Documentaries" }
+                        } else {
+                            streams.update { streamVideos.stream.filter { it.slug == sectionCollection[2] } }
+                            title.update { menuTitle }
+                        }
+                    }
+                }
             }
         }
-    }
 
     fun mapToItem(newsModel: NewsModel) = Item(
         title = stripHtml(newsModel.newsTitle),

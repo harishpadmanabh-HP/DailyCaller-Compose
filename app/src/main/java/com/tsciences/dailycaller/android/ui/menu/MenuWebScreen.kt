@@ -118,7 +118,7 @@ fun MenuWebScreenContent(
                     override fun onLoadResource(view: WebView?, url: String?) {
                         super.onLoadResource(view, url)
                         view?.loadUrl(
-                            "javascript:(function() { " + "var head = document.getElementsByClassName('prod text-white mb-6 font-oswald font-medium uppercase shadow bg-black')[0].style.display='none'; " + "})()"
+                            "javascript:(function() { " + "var head = document.getElementsByClassName('container fullContainer noTopMargin padding20-top padding20-bottom padding40H noBorder borderSolid border3px cornersAll radius0 shadow0 bgNoRepeat emptySection')[0].style.display='none'; " + "})()"
                         )
 
                     }
@@ -126,8 +126,7 @@ fun MenuWebScreenContent(
                     override fun shouldOverrideUrlLoading(
                         view: WebView?, request: WebResourceRequest?
                     ): Boolean {
-                        url?.let { it1 -> view?.loadUrl(it1) }
-                        return true
+                        return super.shouldOverrideUrlLoading(view, request)
                     }
 
                     override fun onPageFinished(view: WebView?, url: String?) {

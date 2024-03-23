@@ -101,7 +101,7 @@ class MediaRouteViewModel @Inject constructor(
         VimeoApiClient.instance()
             .fetchVideo(vimeoUrl, null, null, null, object : VimeoCallback<Video> {
                 override fun onError(error: VimeoResponse.Error) {
-                    _failureMessage.postValue(error.message)
+                    _failureMessage.postValue("We have encountered difficulty locating the video.")
                 }
 
                 override fun onSuccess(response: VimeoResponse.Success<Video>) {
@@ -114,7 +114,7 @@ class MediaRouteViewModel @Inject constructor(
     private fun checkVideoAccess(videoAccess: VideoAccessResponse): Boolean {
         var hasAccess = false
         for (item in videoAccess.accesses) {
-            if (item.resource.name.contains("Patriots") || item.resource.name.contains("Founder")) {
+            if (item.resource.name.lowercase().contains("patriots") || item.resource.name.lowercase().contains("founder")) {
                 hasAccess = true
                 break
             }

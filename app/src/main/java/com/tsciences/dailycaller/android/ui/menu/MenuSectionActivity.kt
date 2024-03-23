@@ -65,39 +65,32 @@ class MenuSectionActivity : ComponentActivity() {
                                 })
                         }
                     } else {
-                        if ((menuTitle?.uppercase()
-                                .equals("Stream Documentaries".uppercase())) || menuTitle?.uppercase()
-                                .equals("Groomed".uppercase())
-                        ) {
-                            StreamDocumentaryScreen(viewModel = viewModel,
-                                menuTerm = menuTag ?: "",
-                                snackbarController = snackbarController,
-                                menuTitle = menuTitle ?: "",
-                                navigateToVideoScreen = { stream ->
-                                    val promoVideoUrl = stream.videoUrl
-                                    val promoVideoId = promoVideoUrl.substringAfterLast('/', "")
-                                    var fullVideoId =
-                                        stream.fullVideoUrl.substringAfterLast('/', "")
-                                    val fullVideoUrls = stream.fullVideoUrl.split("/")
-                                    if (fullVideoUrls.count() > 3) {
-                                        fullVideoId = fullVideoUrls.get(3)
-                                    }
-                                    val intent = Intent(this, LocalPlayerActivity::class.java)
-                                    intent.putExtra("promoVideoId", promoVideoId)
-                                    intent.putExtra("fullVideoId", fullVideoId)
-                                    intent.putExtra("description", stream.summary)
-                                    intent.putExtra("title", stream.title)
-                                    intent.putExtra("subtitle", stream.name)
-                                    intent.putExtra("shouldStart", false)
-                                    intent.putExtra("image", stream.thumImage)
-                                    startActivity(intent)
-                                })
-                        } else {
-                            MenuWebScreen(
-                                viewModel = viewModel,
-                                menuLink = menuTag.toString(),
-                                snackbarController = snackbarController
-                            )
+                        if (menuTag != null) {
+                            if (menuTag.contains("/stream/")) {
+                                StreamDocumentaryScreen(viewModel = viewModel,
+                                    menuTerm = menuTag ?: "",
+                                    snackbarController = snackbarController,
+                                    menuTitle = menuTitle ?: "",
+                                    navigateToVideoScreen = { stream ->
+                                        val promoVideoId = extractVimeoID(stream.videoUrl) ?: ""
+                                        val fullVideoId = extractVimeoID(stream.fullVideoUrl) ?: ""
+                                        val intent = Intent(this, LocalPlayerActivity::class.java)
+                                        intent.putExtra("promoVideoId", promoVideoId)
+                                        intent.putExtra("fullVideoId", fullVideoId)
+                                        intent.putExtra("description", stream.summary)
+                                        intent.putExtra("title", stream.title)
+                                        intent.putExtra("subtitle", stream.name)
+                                        intent.putExtra("shouldStart", false)
+                                        intent.putExtra("image", stream.thumImage)
+                                        startActivity(intent)
+                                    })
+                            } else {
+                                MenuWebScreen(
+                                    viewModel = viewModel,
+                                    menuLink = menuTag.toString(),
+                                    snackbarController = snackbarController
+                                )
+                            }
                         }
 
                     }
@@ -149,6 +142,12 @@ class MenuSectionActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+    fun extractVimeoID(url: String): String? {
+        val pattern = """vimeo\.com/(?:video/)?(\d+)""".toRegex()
+        val matchResult = pattern.find(url)
+        return matchResult?.groupValues?.get(1)
     }
 
     override fun onResume() {

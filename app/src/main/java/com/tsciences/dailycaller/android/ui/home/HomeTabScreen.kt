@@ -1286,13 +1286,20 @@ fun getTabMenuLink(
             menu = "premium-content"
         }
         onMenuSubItemClick(menu, false)
+    } else if (menuRef.contains("/stream/")) {
+        onMenuSubItemClick(menuRef, true)
     } else {
-        if (menuRef.contains("https")) {
+        if (menuRef.startsWith("https://") || menuRef.startsWith("http://")) {
             onMenuSubItemClick(menuRef, true)
         } else {
-            val menuLink = menuRef.plus("/")
-            val webLink: String = AppConstants.WEB_BASE_URL.plus(menuLink)
-            onMenuSubItemClick(webLink, true)
+            if (menuRef.isNotEmpty() && menuRef[0] == '/') {
+                val menuLink: String = menuRef.replaceFirst("/".toRegex(), "")
+                val webLink: String = AppConstants.WEB_BASE_URL.plus(menuLink)
+                onMenuSubItemClick(webLink.plus("/"), true)
+            } else{
+                val webLink: String = AppConstants.WEB_BASE_URL.plus(menuRef)
+                onMenuSubItemClick(webLink.plus("/"), true)
+            }
         }
     }
 }

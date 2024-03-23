@@ -823,10 +823,23 @@ private fun SideNav(
             ) {
 
                 items(menuItems) { menu ->
+                    val headingTitle = menu.title ?: ""
+                    if (headingTitle.uppercase().equals("SUBSCRIBE") && isLogin) {
+                        menu.title = "LOGOUT"
+                    } else if (headingTitle.uppercase().equals("LOGOUT") && isLogin.equals(false)) {
+                        menu.title = "SUBSCRIBE"
+                    }
+
                     ExpandableCard(
                         menuHeading = menu,
                         menuSubItems = menu.link,
-                        onMenuSubItemClick = onMenuSubItemClick
+                        onMenuSubItemClick = { menuLink, menuTitle, isWeb ->
+                            if (menuTitle.equals("LOGOUT")) {
+                                onPatriotLoginLogoutClick(isLogin)
+                            } else {
+                                onMenuSubItemClick(menuLink, menuTitle, isWeb)
+                            }
+                        }
                     )
                 }
             }
@@ -953,11 +966,12 @@ fun ExpandableContent(
             menuSubItems.forEach { menu ->
                 menu.title?.let { menuTitle ->
                     Text(
-                        text = menuTitle.uppercase(),
+                        text = menuTitle,
                         fontFamily = FontFamily(Font(R.font.sofia_pro_medium)),
                         fontSize = 14.sp,
-                        textAlign = TextAlign.Center,
+                        textAlign = TextAlign.Start,
                         color = colorGray,
+                        maxLines = 1,
                         modifier = Modifier
                             .clickable {
                                 menu.href?.let { menuRef -> onMenuSubItemClick(menuRef, menuTitle) }
@@ -982,13 +996,20 @@ fun getMenuLink(
             menu = "premium-content"
         }
         onMenuSubItemClick(menu, false)
+    } else if (menuRef.contains("/stream/")) {
+        onMenuSubItemClick(menuRef, true)
     } else {
-        if (menuRef.contains("https")) {
+        if (menuRef.startsWith("https://") || menuRef.startsWith("http://")) {
             onMenuSubItemClick(menuRef, true)
         } else {
-            val menuLink: String = menuRef.replaceFirst("/".toRegex(), "")
-            val webLink: String = AppConstants.WEB_BASE_URL.plus(menuLink)
-            onMenuSubItemClick(webLink.plus("/"), true)
+            if (menuRef.isNotEmpty() && menuRef[0] == '/') {
+                val menuLink: String = menuRef.replaceFirst("/".toRegex(), "")
+                val webLink: String = AppConstants.WEB_BASE_URL.plus(menuLink)
+                onMenuSubItemClick(webLink.plus("/"), true)
+            } else{
+                val webLink: String = AppConstants.WEB_BASE_URL.plus(menuRef)
+                onMenuSubItemClick(webLink.plus("/"), true)
+            }
         }
     }
 }

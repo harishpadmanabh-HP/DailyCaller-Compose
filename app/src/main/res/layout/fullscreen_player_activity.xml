@@ -62,16 +62,6 @@
         android:visibility="visible"
         android:background="@drawable/player_bg_gradient_dark" >
 
-        <ProgressBar
-            android:id="@+id/progressBar1"
-            style="?android:attr/progressBarStyleLarge"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:visibility="gone"
-            android:progressTint="@color/teal_200"
-            android:thumbTint="@color/teal_700"/>
-
         <com.airbnb.lottie.LottieAnimationView
             android:id="@+id/animation_view"
             android:layout_width="48.dp"

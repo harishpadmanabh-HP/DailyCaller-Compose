@@ -2,6 +2,7 @@ package com.tsciences.dailycaller.android.ui.menu
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
 import android.graphics.Point
@@ -18,10 +19,12 @@ import android.webkit.JavascriptInterface
 import android.widget.*
 import android.widget.SeekBar.OnSeekBarChangeListener
 import androidx.activity.viewModels
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.DialogFragment
+import com.airbnb.lottie.LottieAnimationView
 import com.google.android.gms.cast.*
 import com.google.android.gms.cast.framework.CastButtonFactory
 import com.google.android.gms.cast.framework.CastContext
@@ -61,6 +64,7 @@ import java.util.concurrent.Executors
 
 @AndroidEntryPoint
 class LocalPlayerActivity : AppCompatActivity() {
+    private var animationView: LottieAnimationView? = null
     private var mVideoView: VideoView? = null
     private var watchNowBtn: TextView? = null
     private var mVideoThumbnail: ImageView? = null
@@ -70,7 +74,6 @@ class LocalPlayerActivity : AppCompatActivity() {
     private var mEndText: TextView? = null
     private var mSeekbar: SeekBar? = null
     private var mPlayPause: ImageView? = null
-    private var mLoading: ProgressBar? = null
     private var mControllers: View? = null
     private var mContainer: View? = null
     private var mSeekbarTimer: Timer? = null
@@ -205,15 +208,7 @@ class LocalPlayerActivity : AppCompatActivity() {
                     intent.putExtra("image", image)
                     startActivity(intent)
                 } else {
-                    Toast.makeText(
-                        this,
-                        "You are not granted access to watch this video",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    Handler().postDelayed({
-                        executeComposer(linkToMp4File)
-                    }, Toast.LENGTH_SHORT.toLong())
-
+                    showLoginAlert(this)
                 }
             }
 
@@ -265,7 +260,7 @@ class LocalPlayerActivity : AppCompatActivity() {
                         if (viewModel.getPianoToken().isNotEmpty()) {
                             checkUserAccess(viewModel.getPianoToken())
                         } else {
-                            executeComposer(linkToMp4File)
+                            executeComposer()
                         }
                     }
                     Log.d(
@@ -307,9 +302,9 @@ class LocalPlayerActivity : AppCompatActivity() {
         if (this == currActivity) dailyCallerApplication?.setCurrentActivity(null)
     }
 
-    private fun executeComposer(videoLink: String?) {
+    private fun executeComposer() {
         request = ExperienceRequest.Builder().contentSection("premium-content").debug(true)
-            .url(videoLink ?: "")
+            .url("https://dailycaller.com/stream/slug/")
             .build()
         listeners = listOf(ShowTemplateListener { event: Event<ShowTemplate> ->
             showTemplateController = ShowTemplateController(event, object : ComposerJs() {
@@ -317,7 +312,7 @@ class LocalPlayerActivity : AppCompatActivity() {
                 @JavascriptInterface
                 override fun login(eventData: String) {
                     authResult.launch(
-                        PianoId.signIn()
+                        PianoId.getInstance().signIn()
                     )
                 }
 
@@ -624,6 +619,22 @@ class LocalPlayerActivity : AppCompatActivity() {
         }
     }
 
+    private fun showLoginAlert(context: Context) {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Permission Denied")
+            .setMessage("You do not have permission to watch this video. Kindly log in using another account")
+        builder.setPositiveButton("Use Another Account") { dialog, which ->
+            executeComposer()
+            dialog.dismiss()
+        }
+        builder.setNegativeButton("Cancel") { dialog, which ->
+            dialog.dismiss()
+        }
+
+        val dialog: AlertDialog = builder.create()
+        dialog.show()
+    }
+
     private fun setupControlsCallbacks() {
         mVideoView!!.setOnErrorListener { mp, what, extra ->
             Log.e(
@@ -708,7 +719,7 @@ class LocalPlayerActivity : AppCompatActivity() {
         mPlayCircle!!.visibility = if (isConnected) View.GONE else View.VISIBLE
         when (state) {
             PlaybackState.PLAYING -> {
-                mLoading!!.visibility = View.INVISIBLE
+                animationView!!.visibility = View.INVISIBLE
                 mPlayPause!!.visibility = View.VISIBLE
                 mPlayPause!!.setImageDrawable(
                     resources.getDrawable(R.drawable.ic_av_pause_dark)
@@ -716,13 +727,13 @@ class LocalPlayerActivity : AppCompatActivity() {
                 mPlayCircle!!.visibility = if (isConnected) View.VISIBLE else View.GONE
             }
             PlaybackState.IDLE -> {
+                animationView!!.visibility = View.VISIBLE
                 mPlayCircle!!.visibility = View.VISIBLE
                 mControllers!!.visibility = View.GONE
-                // mCoverArt!!.visibility = View.VISIBLE
                 mVideoView!!.visibility = View.INVISIBLE
             }
             PlaybackState.PAUSED -> {
-                mLoading!!.visibility = View.INVISIBLE
+                animationView!!.visibility = View.INVISIBLE
                 mPlayPause!!.visibility = View.VISIBLE
                 mPlayPause!!.setImageDrawable(
                     resources.getDrawable(R.drawable.ic_av_play_dark)
@@ -730,8 +741,8 @@ class LocalPlayerActivity : AppCompatActivity() {
                 mPlayCircle!!.visibility = if (isConnected) View.VISIBLE else View.GONE
             }
             PlaybackState.BUFFERING -> {
+                animationView?.playAnimation()
                 mPlayPause!!.visibility = View.INVISIBLE
-                mLoading!!.visibility = View.VISIBLE
             }
             else -> {}
         }
@@ -832,6 +843,7 @@ class LocalPlayerActivity : AppCompatActivity() {
     }
 
     private fun loadViews() {
+        animationView = findViewById<LottieAnimationView>(R.id.animation_view)
         mVideoView = findViewById<View>(R.id.videoView1) as VideoView
         watchNowBtn = findViewById<View>(R.id.watchNowBtn) as TextView
         mVideoThumbnail = findViewById<View>(R.id.videoThumbnail) as ImageView
@@ -844,7 +856,6 @@ class LocalPlayerActivity : AppCompatActivity() {
         mEndText = findViewById<View>(R.id.endText) as TextView
         mSeekbar = findViewById<View>(R.id.seekBar1) as SeekBar
         mPlayPause = findViewById<View>(R.id.playPauseImageView) as ImageView
-        mLoading = findViewById<View>(R.id.progressBar1) as ProgressBar
         mControllers = findViewById(R.id.controllers)
         mContainer = findViewById(R.id.container)
         mPlayCircle = findViewById<View>(R.id.play_circle) as ImageButton

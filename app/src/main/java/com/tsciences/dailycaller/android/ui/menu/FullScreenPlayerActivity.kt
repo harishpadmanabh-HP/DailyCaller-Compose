@@ -47,7 +47,6 @@ class FullScreenPlayerActivity : AppCompatActivity() {
     private var mEndText: TextView? = null
     private var mSeekbar: SeekBar? = null
     private var mPlayPause: ImageView? = null
-    private var mLoading: ProgressBar? = null
     private var mControllers: View? = null
     private var mContainer: View? = null
     private var mSeekbarTimer: Timer? = null
@@ -541,8 +540,6 @@ class FullScreenPlayerActivity : AppCompatActivity() {
         when (state) {
             PlaybackState.PLAYING -> {
                 animationView!!.visibility = View.INVISIBLE
-
-                mLoading!!.visibility = View.INVISIBLE
                 mPlayPause!!.visibility = View.VISIBLE
                 mPlayPause!!.setImageDrawable(
                     resources.getDrawable(R.drawable.ic_av_pause_dark)
@@ -556,7 +553,7 @@ class FullScreenPlayerActivity : AppCompatActivity() {
                 mVideoView!!.visibility = View.INVISIBLE
             }
             PlaybackState.PAUSED -> {
-                mLoading!!.visibility = View.INVISIBLE
+                animationView!!.visibility = View.INVISIBLE
                 mPlayPause!!.visibility = View.VISIBLE
                 mPlayPause!!.setImageDrawable(
                     resources.getDrawable(R.drawable.ic_av_play_dark)
@@ -566,7 +563,6 @@ class FullScreenPlayerActivity : AppCompatActivity() {
             PlaybackState.BUFFERING -> {
                 animationView?.playAnimation()
                 mPlayPause!!.visibility = View.INVISIBLE
-                mLoading!!.visibility = View.VISIBLE
             }
             else -> {}
         }
@@ -661,7 +657,6 @@ class FullScreenPlayerActivity : AppCompatActivity() {
         mEndText = findViewById<View>(R.id.endText) as TextView
         mSeekbar = findViewById<View>(R.id.seekBar1) as SeekBar
         mPlayPause = findViewById<View>(R.id.playPauseImageView) as ImageView
-        mLoading = findViewById<View>(R.id.progressBar1) as ProgressBar
         mControllers = findViewById(R.id.controllers)
         mContainer = findViewById(R.id.container)
         mPlayCircle = findViewById<View>(R.id.play_circle) as ImageButton

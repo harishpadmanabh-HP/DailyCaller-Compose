@@ -13,7 +13,7 @@ data class MenuResponse(
 data class MenuItem(
     @SerializedName("_href") @Expose var href: String? = null,
 
-    @SerializedName("_title") @Expose val title: String? = null,
+    @SerializedName("_title") @Expose var title: String? = null,
 
     @SerializedName("link") @Expose val link: List<MenuSubItem>? = null,
 

@@ -89,7 +89,7 @@ fun StreamDocumentaryContent(
     onVideoClick: (Stream) -> Unit
 ) {
     LaunchedEffect(Unit) {
-        viewModel.getStreamItems(menuTitle)
+        viewModel.getStreamItems(menuTerm,menuTitle)
     }
 
     DailyCallerScaffold(containerColor = gray,
@@ -200,14 +200,14 @@ fun StreamDocumentaryContent(
 
                 }
             }
-
-            if (menuTitle.uppercase() == "Groomed".uppercase()) {
+            val sectionCollection = menuTerm.split("/")
+            if (sectionCollection.size > 3) {
                 Button(
                     modifier = Modifier
                         .padding(start = 10.dp, end = 10.dp, top = 30.dp)
                         .fillMaxWidth(),
                     onClick = {
-                        viewModel.getStreamItems("Stream Documentaries")
+                        viewModel.getStreamItems(menuTerm,menuTitle,true)
                     },
                     shape = RoundedCornerShape(5.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = colorBlack)
