@@ -2,6 +2,7 @@ package com.tsciences.dailycaller.android.ui.newsDetail
 
 import android.app.Activity
 import android.content.Intent
+import android.content.pm.ActivityInfo
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -28,6 +29,7 @@ import com.tsciences.dailycaller.android.ui.comment.CommentActivity
 import com.tsciences.dailycaller.android.ui.commonComponents.SnackbarController
 import com.tsciences.dailycaller.android.ui.commonComponents.rememberSnackbarController
 import com.tsciences.dailycaller.android.ui.networknotfound.NetworkNotFoundActivity
+import com.tsciences.dailycaller.android.utils.hasInternet
 import dagger.hilt.android.AndroidEntryPoint
 import io.piano.android.composer.Composer
 import io.piano.android.composer.listeners.EventTypeListener
@@ -143,6 +145,11 @@ class NewsDetailActivity : AppCompatActivity() {
         setContent {
             snackBarController = rememberSnackbarController()
             DailyCallerTheme {
+                if (isDeviceTablet(this)) {
+                    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR)
+                } else {
+                    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
+                }
                 NewsDetailScreen(news = newsDetails,
                     snackBarController = snackBarController,
                     viewModel = viewModel,
@@ -163,10 +170,16 @@ class NewsDetailActivity : AppCompatActivity() {
                         } else if (urlIdentifier.equals("validUrl")) {
                             viewModel.getSearchNewsDetails(url)
                         } else {
-                            val browserIntent = Intent(
-                                Intent.ACTION_VIEW, Uri.parse(url)
-                            )
-                            startActivity(browserIntent)
+
+                            if(hasInternet(context = this)){
+                                val browserIntent = Intent(
+                                    Intent.ACTION_VIEW, Uri.parse(url)
+                                )
+                                startActivity(browserIntent)
+                            } else {
+                                snackBarController.showSnackbar("You are offline.Please Check your Internet Connection ")
+                            }
+
                         }
                     },
                     navigateToNewsDetailPage = { newsItem ->
@@ -183,10 +196,11 @@ class NewsDetailActivity : AppCompatActivity() {
                             startActivity(networkNotFoundIntent)
                         }
                     },
-                    onSlideShowClick = { gallery ->
+                    onSlideShowClick = { index,gallery ->
                         registerEvent("Article_Gallery_Viewed")
                         val slideShowActivityIntent = Intent(this, SlideShowActivity::class.java)
                         val news = Gson().toJson(newsDetails)
+                        slideShowActivityIntent.putExtra("index", index)
                         slideShowActivityIntent.putExtra("news", news)
                         startActivity(slideShowActivityIntent)
                     },
@@ -253,14 +267,14 @@ class NewsDetailActivity : AppCompatActivity() {
 
         if (request != null) {
             Composer.getInstance().getExperience(request!!, listeners) {
-                    Toast.makeText(this, "exception", Toast.LENGTH_SHORT).show()
+                   // Toast.makeText(this, "exception", Toast.LENGTH_SHORT).show()
                     // process exception here.
                 }
         }
     }
 
 
-    override fun onNewIntent(intent: Intent?) {
+    override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         if (intent != null) {
             if (intent.getBooleanExtra("deeplink", false) == true) {

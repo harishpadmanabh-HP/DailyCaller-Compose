@@ -17,13 +17,14 @@ class SlideShowActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val index = intent.getIntExtra("index",-1)
         val newsDetails = intent.getStringExtra("news")
         val news = Gson().fromJson(newsDetails, Item::class.java)
         setContent {
             snackBarController = rememberSnackbarController()
             DailyCallerTheme {
                 news.oGallery?.slideList?.let {
-                    SlideShowScreen(slides = it, onShareClick = {
+                    SlideShowScreen(currentIndex = index, slides = it, onShareClick = {
                         share(this, news)
                     })
                 }

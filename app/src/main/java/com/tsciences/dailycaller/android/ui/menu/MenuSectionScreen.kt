@@ -173,7 +173,7 @@ fun MenuScreenContent(
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .height(dimensionResource(id = R.dimen.home_firstItemHeight))
-                                    .constrainAs(collapsibleNewsImage) {})
+                                    .constrainAs(collapsibleNewsImage) {},placeholder = painterResource(id = R.drawable.default_image_wide))
 
                             if (news.premiumContent) {
                                 Image(

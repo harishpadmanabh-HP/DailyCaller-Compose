@@ -7,7 +7,7 @@ import androidx.room.Query
 @Dao
 interface NewsDao {
     @Insert
-    fun insertUser(oNewsModel: NewsModel?)
+    fun insertUser(oNewsModel: NewsModel)
 
     @Query("DELETE FROM news_item")
     fun deleteNews()

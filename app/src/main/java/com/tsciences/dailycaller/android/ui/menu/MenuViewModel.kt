@@ -70,11 +70,11 @@ class MenuViewModel @Inject constructor(
         onRequest = { page ->
             if (menuTag == "two-sides" || menuTag == "premium-content") {
                 repo.getMenuNewsPremiumTwosides(
-                    menuTerm = menuTag, pageId = page + 1, maxPosts = 11
+                    menuTerm = menuTag, pageId = page + 1, maxPosts = 75
                 )
             } else {
                 repo.getMenuNewsList(
-                    menuTerm = menuTag, pageId = page, maxPosts = 11
+                    menuTerm = menuTag, pageId = page, maxPosts = 75
                 )
             }
 

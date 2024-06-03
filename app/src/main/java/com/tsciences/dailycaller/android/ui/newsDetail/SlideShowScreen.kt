@@ -26,16 +26,19 @@ import com.tsciences.dailycaller.android.R
 import com.tsciences.dailycaller.android.core.util.popActivity
 import com.tsciences.dailycaller.android.data.remote.home.Slide
 import com.tsciences.dailycaller.android.ui.commonComponents.*
+import com.tsciences.dailycaller.android.utils.stripHtml
 import java.util.*
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun SlideShowScreen(
+    currentIndex: Int,
     slides: List<Slide>, onShareClick: () -> Unit
 ) {
     val context = LocalContext.current
 
     SlideShowScreenContent(
+        currentIndex = currentIndex,
         navigateBack = context::popActivity, slides = slides, onShareClick = onShareClick
     )
 }
@@ -43,13 +46,22 @@ fun SlideShowScreen(
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun SlideShowScreenContent(
+    currentIndex: Int,
     navigateBack: () -> Unit, slides: List<Slide>, onShareClick: () -> Unit
 ) {
-    val currentPage = mutableStateOf(0)
-    val pagerState = rememberPagerState()
+    val pagerState = rememberPagerState(
+        initialPage = currentIndex,
+        initialPageOffsetFraction = 0f
+    ) {
+        slides.size
+    }
+    var currentPage by remember {
+        mutableStateOf(0)
+    }
+    // val pagerState = rememberPagerState()
     LaunchedEffect(pagerState.currentPage) {
         // do your stuff with pagerState.currentPage
-        currentPage.value = pagerState.currentPage
+        currentPage = pagerState.currentPage
     }
     Column(
         modifier = Modifier
@@ -63,14 +75,13 @@ fun SlideShowScreenContent(
             })
         }
 
-
         HorizontalPager(
-            modifier = Modifier.weight(2f), pageCount = slides.size, state = pagerState
+            modifier = Modifier.weight(2f), state = pagerState
         ) {
             Column(modifier = Modifier.fillMaxSize()) {
-                slides.get(currentPage.value).slideTitle?.let { it1 ->
+                slides.get(currentPage).slideTitle?.let { it1 ->
                     Text(
-                        text = it1,
+                        text = stripHtml(it1),
                         modifier = Modifier.weight(.5f),
                         fontFamily = FontFamily(Font(R.font.sofia_pro_medium)),
                         fontSize = 14.sp,
@@ -79,7 +90,7 @@ fun SlideShowScreenContent(
                 }
 
                 AsyncImage(
-                    model = slides.get(currentPage.value).slideFullImage,
+                    model = slides.get(currentPage).slideFullImage,
                     contentDescription = "",
                     contentScale = ContentScale.Crop,
                     modifier = Modifier.weight(3f)
@@ -89,11 +100,11 @@ fun SlideShowScreenContent(
         }
         ConstraintLayout(modifier = Modifier.fillMaxWidth()) {
             val (leftArrow, rightArrow, currentCount, totalCount, slash) = createRefs()
-            if (!currentPage.value.equals(0)) {
+            if (!currentPage.equals(0)) {
                 IconButton(modifier = Modifier.constrainAs(leftArrow) {
                     start.linkTo(parent.start)
                 }, onClick = {
-                    currentPage.value = currentPage.value - 1
+                    currentPage = currentPage - 1
                 }) {
                     Icon(
                         imageVector = Icons.Default.ArrowBack,
@@ -104,11 +115,11 @@ fun SlideShowScreenContent(
                 }
             }
 
-            if (!currentPage.value.equals(slides.size - 1)) {
+            if (!currentPage.equals(slides.size - 1)) {
                 IconButton(modifier = Modifier.constrainAs(rightArrow) {
                     end.linkTo(parent.end)
                 }, onClick = {
-                    currentPage.value = currentPage.value + 1
+                    currentPage = currentPage + 1
                 }) {
                     Icon(
                         imageVector = Icons.Default.ArrowForward,
@@ -119,7 +130,7 @@ fun SlideShowScreenContent(
                 }
             }
 
-            Text(text = (currentPage.value + 1).toString(),
+            Text(text = (currentPage + 1).toString(),
                 fontFamily = FontFamily(Font(R.font.roboto_light)),
                 fontSize = 25.sp,
                 color = Color.White,

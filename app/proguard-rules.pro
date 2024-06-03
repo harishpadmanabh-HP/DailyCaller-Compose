@@ -21,3 +21,15 @@
 #-renamesourcefileattribute SourceFile
 
 -keep class com.tsciences.dailycaller.android.data.** { *; }
+# Please add these rules to your existing keep rules in order to suppress warnings.
+# This is generated automatically by the Android Gradle plugin.
+-dontwarn com.squareup.okhttp.Cache
+-dontwarn com.squareup.okhttp.CacheControl$Builder
+-dontwarn com.squareup.okhttp.CacheControl
+-dontwarn com.squareup.okhttp.Call
+-dontwarn com.squareup.okhttp.OkHttpClient
+-dontwarn com.squareup.okhttp.Request$Builder
+-dontwarn com.squareup.okhttp.Request
+-dontwarn com.squareup.okhttp.Response
+-dontwarn com.squareup.okhttp.ResponseBody
+-dontwarn io.piano.android.id.PianoOAuthActivity

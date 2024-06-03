@@ -2,6 +2,7 @@ package com.tsciences.dailycaller.android.ui.menu
 
 import android.content.ActivityNotFoundException
 import android.content.Intent
+import android.content.pm.ActivityInfo
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -29,6 +30,11 @@ class MenuSectionActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         menuItemCategory = intent.getStringExtra("menuItemCategory")
         setContent {
+            if (isDeviceTablet(this)) {
+                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR)
+            } else {
+                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
+            }
             val snackbarController = rememberSnackbarController()
             viewModel.setTabDeviceOrNot(isDeviceTablet(this))
             DailyCallerTheme {

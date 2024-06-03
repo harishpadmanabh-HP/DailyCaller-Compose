@@ -1,6 +1,7 @@
 package com.tsciences.dailycaller.android.ui.search
 
 import android.content.Intent
+import android.content.pm.ActivityInfo
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -8,6 +9,7 @@ import androidx.activity.viewModels
 import com.google.gson.Gson
 import com.tsciences.dailycaller.android.FirebaseAnalyticsEvent.EventRegister
 import com.tsciences.dailycaller.android.core.theme.DailyCallerTheme
+import com.tsciences.dailycaller.android.core.util.isDeviceTablet
 import com.tsciences.dailycaller.android.ui.commonComponents.rememberSnackbarController
 import com.tsciences.dailycaller.android.ui.newsDetail.NewsDetailActivity
 import dagger.hilt.android.AndroidEntryPoint
@@ -27,6 +29,11 @@ class SearchActivity : ComponentActivity() {
         setContent {
             val snackbarController = rememberSnackbarController()
             DailyCallerTheme {
+                if (isDeviceTablet(this)) {
+                    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR)
+                } else {
+                    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
+                }
                 SearchScreen(viewModel = viewModel,
                     searchTag = searchTag.toString(),
                     snackbarController = snackbarController,

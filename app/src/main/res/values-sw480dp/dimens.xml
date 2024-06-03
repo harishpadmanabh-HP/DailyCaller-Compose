@@ -16,7 +16,7 @@
     <dimen name="logo_height">75dp</dimen>
 
     <dimen name="home_firstItemHeight">250dp</dimen>
-    <dimen name="newsDetailSpacerHeight">2300dp</dimen>
+    <dimen name="newsDetailSpacerHeight">230dp</dimen>
     <dimen name="home_firstItemViewHeight">125dp</dimen>
     <dimen name="newsDetailViewHeight">100dp</dimen>
 </resources>

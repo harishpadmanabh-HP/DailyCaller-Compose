@@ -1,8 +1,10 @@
 package com.tsciences.dailycaller.android.ui.home
 
 import android.content.Intent
+import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -46,6 +48,7 @@ class HomeActivity : ComponentActivity() {
             }
             is PianoIdAuthFailureResult -> {
                 val e = result.exception
+                Log.d("exceptionGoogle","$e.cause.message")
                 Toast.makeText(this, e.cause?.message, Toast.LENGTH_SHORT).show()
             }
         }
@@ -65,6 +68,7 @@ class HomeActivity : ComponentActivity() {
 
             DailyCallerTheme {
                 if (isDeviceTablet(this)) {
+                    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR)
                     HomeTabScreen(viewModel = viewModel,
                         onNewsItemClick = {
                             it.encodedString = it.encoded?.text
@@ -122,6 +126,7 @@ class HomeActivity : ComponentActivity() {
                             startActivity(intent)
                         })
                 } else {
+                    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
                     HomeScreen(viewModel = viewModel,
                         onNewsItemClick = {
                             it.encodedString = it.encoded?.text
@@ -163,7 +168,7 @@ class HomeActivity : ComponentActivity() {
                                 }
                             } else {
                                 authResult.launch(
-                                    PianoId.signIn()
+                                    PianoId.getInstance().signIn()
                                 )
                             }
                         },

@@ -59,7 +59,9 @@ fun HomeNewsItem(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(dimensionResource(id = com.tsciences.dailycaller.android.R.dimen.home_firstItemHeight))
-                    .constrainAs(newsImage) {})
+                    .constrainAs(newsImage) {},
+                placeholder = painterResource(id = R.drawable.default_image_wide)
+            )
 
             if (news.premiumContent == true) {
                 Image(
@@ -169,7 +171,7 @@ fun HomeNewsItemTab1(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(200.dp)
-                    .constrainAs(newsImage) {})
+                    .constrainAs(newsImage) {},placeholder = painterResource(id = R.drawable.default_image))
 
             if (news.premiumContent == true) {
                 Image(
@@ -282,7 +284,7 @@ fun HomeNewsItemTab2(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(200.dp)
-                    .constrainAs(collapsibleNewsImage) {}
+                    .constrainAs(collapsibleNewsImage) {},placeholder = painterResource(id = R.drawable.default_image)
             )
 
             if (news.premiumContent) {

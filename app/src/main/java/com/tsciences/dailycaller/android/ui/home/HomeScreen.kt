@@ -4,10 +4,12 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.*
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
@@ -141,6 +143,7 @@ fun HomeScreenContent(
             )
         }
     })
+    val interactionSource = remember { MutableInteractionSource() }
     val collapseState = rememberCollapsingToolbarScaffoldState()
 
     val isToolbarVisible: Boolean by remember {
@@ -325,7 +328,7 @@ fun HomeScreenContent(
                                                 it
                                             )
                                         }
-                                    })
+                                    }, placeholder = painterResource(id = R.drawable.default_image_wide))
 
                             if (state.newsFirstItem?.premiumContent == true) {
                                 Image(
@@ -536,6 +539,60 @@ fun HomeScreenContent(
                                             Text(
                                                 tabItems.tab,
                                                 color = colorBlack,
+                                                modifier = Modifier.clickable (interactionSource = interactionSource, indication = null, onClick = {
+                                                    tabIndex = index
+                                                    when (tabIndex) {
+                                                        0 -> {
+                                                            if(tabName != TabItems.Home.tab){
+                                                                tabName = TabItems.Home.tab
+                                                                loadNextNewsList(tabName, true)
+                                                            }
+
+                                                        }
+                                                        1 -> {
+                                                            if(tabName != TabItems.Us.tab) {
+                                                                tabName = TabItems.Us.tab
+                                                                loadNextNewsList(tabName, true)
+                                                            }
+                                                        }
+                                                        2 -> {
+                                                            if(tabName != TabItems.Business.tab) {
+                                                                tabName = TabItems.Business.tab
+                                                                loadNextNewsList(tabName, true)
+                                                            }
+                                                        }
+                                                        3 -> {
+                                                            if(tabName != TabItems.Tech.tab) {
+                                                                tabName = TabItems.Tech.tab
+                                                                loadNextNewsList(tabName, true)
+                                                            }
+                                                        }
+                                                        4 -> {
+                                                            if(tabName != TabItems.Politics.tab) {
+                                                                tabName = TabItems.Politics.tab
+                                                                loadNextNewsList(tabName, true)
+                                                            }
+                                                        }
+                                                        5 -> {
+                                                            if(tabName != TabItems.Opinion.tab) {
+                                                                tabName = TabItems.Opinion.tab
+                                                                loadNextNewsList(tabName, true)
+                                                            }
+                                                        }
+                                                        6 -> {
+                                                            if(tabName != TabItems.Entertainment.tab) {
+                                                                tabName = TabItems.Entertainment.tab
+                                                                loadNextNewsList(tabName, true)
+                                                            }
+                                                        }
+                                                        7 -> {
+                                                            if(tabName != TabItems.Education.tab) {
+                                                                tabName = TabItems.Education.tab
+                                                                loadNextNewsList(tabName, true)
+                                                            }
+                                                        }
+                                                    }
+                                                }),
                                                 fontFamily = FontFamily(Font(R.font.roboto_light))
                                             )
                                         },
@@ -552,43 +609,8 @@ fun HomeScreenContent(
                                             ),
 
                                         selected = tabIndex == index,
-                                        onClick = {
-                                            tabIndex = index
-                                            when (tabIndex) {
-                                                0 -> {
-                                                    tabName = TabItems.Home.tab
-                                                    loadNextNewsList(tabName, true)
-                                                }
-                                                1 -> {
-                                                    tabName = TabItems.Us.tab
-                                                    loadNextNewsList(tabName, true)
-                                                }
-                                                2 -> {
-                                                    tabName = TabItems.Business.tab
-                                                    loadNextNewsList(tabName, true)
-                                                }
-                                                3 -> {
-                                                    tabName = TabItems.Tech.tab
-                                                    loadNextNewsList(tabName, true)
-                                                }
-                                                4 -> {
-                                                    tabName = TabItems.Politics.tab
-                                                    loadNextNewsList(tabName, true)
-                                                }
-                                                5 -> {
-                                                    tabName = TabItems.Opinion.tab
-                                                    loadNextNewsList(tabName, true)
-                                                }
-                                                6 -> {
-                                                    tabName = TabItems.Entertainment.tab
-                                                    loadNextNewsList(tabName, true)
-                                                }
-                                                7 -> {
-                                                    tabName = TabItems.Education.tab
-                                                    loadNextNewsList(tabName, true)
-                                                }
-                                            }
-                                        },
+                                        onClick = {}
+
                                     )
                                 }
                             }

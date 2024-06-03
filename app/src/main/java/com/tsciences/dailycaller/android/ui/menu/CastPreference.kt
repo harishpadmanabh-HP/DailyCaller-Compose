@@ -46,10 +46,8 @@ class CastPreference constructor() : FragmentActivity() {
             preferenceScreen.sharedPreferences?.registerOnSharedPreferenceChangeListener(this)
         }
 
-        override fun onSharedPreferenceChanged(
-            sharedPreferences: SharedPreferences, key: String
-        ) {
-            // Handle volume and caption preferences.
+        override fun onSharedPreferenceChanged(p0: SharedPreferences?, p1: String?) {
+            TODO("Not yet implemented")
         }
     }
 }

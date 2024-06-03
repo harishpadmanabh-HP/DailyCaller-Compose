@@ -4,6 +4,7 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.*
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -336,7 +337,7 @@ fun HomeTabScreenContent(
                                                         it
                                                     )
                                                 }
-                                            })
+                                            },placeholder = painterResource(id = R.drawable.default_image))
 
                                     if (news.premiumContent) {
                                         Image(
@@ -472,7 +473,7 @@ fun HomeTabScreenContent(
                                                     onNewsItemClick(
                                                         news
                                                     )
-                                                })
+                                                },placeholder = painterResource(id = R.drawable.default_image))
 
                                         if (news.premiumContent) {
                                             Image(
@@ -617,7 +618,7 @@ fun HomeTabScreenContent(
                                                     onNewsItemClick(
                                                         news
                                                     )
-                                                })
+                                                },placeholder = painterResource(id = R.drawable.default_image))
 
                                         if (news.premiumContent == true) {
                                             Image(
@@ -807,6 +808,7 @@ fun HomeTabScreenContent(
 
 
                     }) {
+                    val interactionSource = remember { MutableInteractionSource() }
                     var tabIndex by remember { mutableStateOf(0) }
                     Column(
                         modifier = Modifier
@@ -862,10 +864,99 @@ fun HomeTabScreenContent(
                                                     tabItems.tab.uppercase(),
                                                     color = Color.Black,
                                                     fontSize = 18.sp,
-                                                    modifier = Modifier.padding(
-                                                        start = 40.dp,
-                                                        end = 40.dp
-                                                    )
+                                                    modifier = Modifier
+                                                        .padding(
+                                                            start = 40.dp,
+                                                            end = 40.dp
+                                                        )
+                                                        .clickable(interactionSource = interactionSource,
+                                                            indication = null,
+                                                            onClick = {
+                                                                tabIndex = index
+                                                                when (tabIndex) {
+                                                                    0 -> {
+                                                                        if (tabName != TabItems.Home.tab) {
+                                                                            tabName =
+                                                                                TabItems.Home.tab
+                                                                            loadNextNewsList(
+                                                                                tabName,
+                                                                                true
+                                                                            )
+                                                                        }
+
+                                                                    }
+                                                                    1 -> {
+                                                                        if (tabName != TabItems.Us.tab) {
+                                                                            tabName =
+                                                                                TabItems.Us.tab
+                                                                            loadNextNewsList(
+                                                                                tabName,
+                                                                                true
+                                                                            )
+                                                                        }
+                                                                    }
+                                                                    2 -> {
+                                                                        if (tabName != TabItems.Business.tab) {
+                                                                            tabName =
+                                                                                TabItems.Business.tab
+                                                                            loadNextNewsList(
+                                                                                tabName,
+                                                                                true
+                                                                            )
+                                                                        }
+                                                                    }
+                                                                    3 -> {
+                                                                        if (tabName != TabItems.Tech.tab) {
+                                                                            tabName =
+                                                                                TabItems.Tech.tab
+                                                                            loadNextNewsList(
+                                                                                tabName,
+                                                                                true
+                                                                            )
+                                                                        }
+                                                                    }
+                                                                    4 -> {
+                                                                        if (tabName != TabItems.Politics.tab) {
+                                                                            tabName =
+                                                                                TabItems.Politics.tab
+                                                                            loadNextNewsList(
+                                                                                tabName,
+                                                                                true
+                                                                            )
+                                                                        }
+                                                                    }
+                                                                    5 -> {
+                                                                        if (tabName != TabItems.Opinion.tab) {
+                                                                            tabName =
+                                                                                TabItems.Opinion.tab
+                                                                            loadNextNewsList(
+                                                                                tabName,
+                                                                                true
+                                                                            )
+                                                                        }
+                                                                    }
+                                                                    6 -> {
+                                                                        if (tabName != TabItems.Entertainment.tab) {
+                                                                            tabName =
+                                                                                TabItems.Entertainment.tab
+                                                                            loadNextNewsList(
+                                                                                tabName,
+                                                                                true
+                                                                            )
+                                                                        }
+                                                                    }
+                                                                    7 -> {
+                                                                        if (tabName != TabItems.Education.tab) {
+                                                                            tabName =
+                                                                                TabItems.Education.tab
+                                                                            loadNextNewsList(
+                                                                                tabName,
+                                                                                true
+                                                                            )
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }),
                                                 )
                                             },
                                             modifier = Modifier
@@ -882,47 +973,11 @@ fun HomeTabScreenContent(
 
                                             selected = tabIndex == index,
                                             onClick = {
-                                                tabIndex = index
-                                                when (tabIndex) {
-                                                    0 -> {
-                                                        tabName = TabItems.Home.tab
-                                                        loadNextNewsList(tabName, true)
-                                                    }
-                                                    1 -> {
-                                                        tabName = TabItems.Us.tab
-                                                        loadNextNewsList(tabName, true)
-                                                    }
-                                                    2 -> {
-                                                        tabName = TabItems.Business.tab
-                                                        loadNextNewsList(tabName, true)
-                                                    }
-                                                    3 -> {
-                                                        tabName = TabItems.Tech.tab
-                                                        loadNextNewsList(tabName, true)
-                                                    }
-                                                    4 -> {
-                                                        tabName = TabItems.Politics.tab
-                                                        loadNextNewsList(tabName, true)
-                                                    }
-                                                    5 -> {
-                                                        tabName = TabItems.Opinion.tab
-                                                        loadNextNewsList(tabName, true)
-                                                    }
-                                                    6 -> {
-                                                        tabName = TabItems.Entertainment.tab
-                                                        loadNextNewsList(tabName, true)
-                                                    }
-                                                    7 -> {
-                                                        tabName = TabItems.Education.tab
-                                                        loadNextNewsList(tabName, true)
-                                                    }
-                                                }
                                             },
                                         )
                                     }
                                 }
                             }
-
                         }
 
                         LazyVerticalGrid(
@@ -931,7 +986,6 @@ fun HomeTabScreenContent(
                                 .padding(top = SpacingMedium),
 
                             columns = GridCells.Fixed(2)
-
                         )
                         {
 
@@ -1262,8 +1316,9 @@ fun ExpandableTabContent(
                     Text(text = menuTitle.uppercase(),
                         fontFamily = FontFamily(Font(R.font.sofia_pro_medium)),
                         fontSize = 18.sp,
-                        textAlign = TextAlign.Center,
+                        textAlign = TextAlign.Start,
                         color = colorGray,
+                        maxLines = 1,
                         modifier = Modifier
                             .clickable {
                                 menu.href?.let { menuRef -> onMenuSubItemClick(menuRef, menuTitle) }
@@ -1296,7 +1351,7 @@ fun getTabMenuLink(
                 val menuLink: String = menuRef.replaceFirst("/".toRegex(), "")
                 val webLink: String = AppConstants.WEB_BASE_URL.plus(menuLink)
                 onMenuSubItemClick(webLink.plus("/"), true)
-            } else{
+            } else {
                 val webLink: String = AppConstants.WEB_BASE_URL.plus(menuRef)
                 onMenuSubItemClick(webLink.plus("/"), true)
             }

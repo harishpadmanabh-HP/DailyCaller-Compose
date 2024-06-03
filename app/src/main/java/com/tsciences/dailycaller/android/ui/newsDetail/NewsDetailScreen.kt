@@ -4,10 +4,8 @@ import android.annotation.SuppressLint
 import android.view.ViewGroup
 import android.webkit.WebView
 import android.webkit.WebViewClient
-import android.widget.Toast
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
@@ -20,6 +18,7 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
@@ -35,22 +34,22 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.tsciences.dailycaller.android.core.util.getCategoryColor
-import com.tsciences.dailycaller.android.core.util.getTime
-import com.tsciences.dailycaller.android.core.util.popActivity
 import coil.compose.AsyncImage
 import com.google.android.gms.ads.*
 import com.tsciences.dailycaller.android.R
 import com.tsciences.dailycaller.android.appConstants.AppConstants
 import com.tsciences.dailycaller.android.core.theme.SpacingMedium
 import com.tsciences.dailycaller.android.core.theme.colorBlack
+import com.tsciences.dailycaller.android.core.util.getCategoryColor
+import com.tsciences.dailycaller.android.core.util.getTime
+import com.tsciences.dailycaller.android.core.util.popActivity
 import com.tsciences.dailycaller.android.data.remote.home.Gallery
 import com.tsciences.dailycaller.android.data.remote.home.Item
-import com.tsciences.dailycaller.android.data.remote.home.Slide
 import com.tsciences.dailycaller.android.ui.commonComponents.*
 import com.tsciences.dailycaller.android.ui.commonComponents.utils.VerticalSpacer
 import com.tsciences.dailycaller.android.ui.commonComponents.utils.dailyCallerScreenContentPadding
 import com.tsciences.dailycaller.android.utils.getLinkFromSearchItem
+import com.tsciences.dailycaller.android.utils.hasInternet
 import com.tsciences.dailycaller.android.utils.isValidLink
 import com.tsciences.dailycaller.android.utils.stripHtml
 import kotlinx.coroutines.launch
@@ -68,7 +67,7 @@ fun NewsDetailScreen(
     onUrlClick: (urlIdentifier: String, url: String) -> Unit,
     navigateToNewsDetailPage: (Item) -> Unit,
     navigateToNotFoundPage: (Boolean) -> Unit,
-    onSlideShowClick: (Gallery) -> Unit,
+    onSlideShowClick: (Int,Gallery) -> Unit,
     onShareClick: (item: Item) -> Unit,
     onSaveNewsClick: (isSave: Boolean, newsItem: Item) -> Unit,
 ) {
@@ -137,11 +136,11 @@ fun NewsDetailScreenContent(
     isTab: Boolean,
     onUrlClick: (urlIdentifier: String, url: String) -> Unit,
     scrollState: ScrollState,
-    onSlideShowClick: (Gallery) -> Unit,
+    onSlideShowClick: (Int,Gallery) -> Unit,
     onShareClick: (item: Item) -> Unit,
     state: NewsDetailState
 ) {
-
+    val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
     coroutineScope.launch {
         scrollState.scrollTo(0)
@@ -153,8 +152,18 @@ fun NewsDetailScreenContent(
     DailyCallerScaffold(snackbarController = snackBarController, floatingActionButton = {
         FloatingActionButton(
             onClick = {
-                isSaveNews = !isSaveNews
-                onSaveNewsClick(isSaveNews, news)
+                if (isSaveNews) {
+                    isSaveNews = false
+                    onSaveNewsClick(isSaveNews, news)
+                } else {
+                    if (hasInternet(context)) {
+                        isSaveNews = true
+                        onSaveNewsClick(isSaveNews, news)
+                    } else {
+                        snackBarController.showSnackbar("You are offline , not able to save news.")
+                    }
+                }
+
             }, containerColor = Color.Red, contentColor = Color.White, shape = CircleShape
         ) {
             Icon(
@@ -177,8 +186,10 @@ fun NewsDetailScreenContent(
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(dimensionResource(id = R.dimen.home_firstItemHeight))
+                    .height(dimensionResource(id = R.dimen.home_firstItemHeight)),
+                placeholder = painterResource(id = R.drawable.default_image_wide)
             )
+
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -186,7 +197,10 @@ fun NewsDetailScreenContent(
                     .padding(paddingValues)
                     .padding(dailyCallerScreenContentPadding())
                     .verticalScroll(scrollState)
+
             ) {
+
+
                 VerticalSpacer(spacing = dimensionResource(id = R.dimen.newsDetailSpacerHeight))
                 Surface(modifier = Modifier.background(Color.White)) {
 
@@ -207,7 +221,7 @@ fun NewsDetailScreenContent(
                                         .background(Color.White)
                                         .padding(horizontal = 16.dp, vertical = 16.dp)
                                 ) {
-                                    val (categoryTag, foundationImage, title, authorName, redDotImage, time, shareButton, divider1, newsView, bannerTitle, mainBanner, showComments, slideshow) = createRefs()
+                                    val (authorImage, categoryTag, foundationImage, title, authorName, redDotImage, time, shareButton, divider1, newsView, bannerTitle, mainBanner, showComments, slideshow) = createRefs()
                                     VerticalSpacer(spacing = dimensionResource(id = R.dimen.newsDetailSpacerHeight))
 
                                     Text(
@@ -238,6 +252,24 @@ fun NewsDetailScreenContent(
                                                     top.linkTo(categoryTag.top)
                                                     bottom.linkTo(categoryTag.bottom)
                                                 })
+                                    }
+                                    Box(
+                                        modifier = Modifier
+                                            .size(50.dp)
+                                            .clip(shape = CircleShape)
+                                            .background(Color.White)
+                                            .constrainAs(authorImage) {
+                                                start.linkTo(foundationImage.end)
+                                                end.linkTo(parent.end)
+                                            }
+                                    ) {
+                                        AsyncImage(
+                                            model = news.authorImage,
+                                            contentDescription = "",
+                                            contentScale = ContentScale.Crop,
+                                            modifier = Modifier
+                                                .fillMaxSize()
+                                        )
                                     }
 
                                     stripHtml(news.title).let { titletxt ->
@@ -325,8 +357,8 @@ fun NewsDetailScreenContent(
                                             }, factory = { context ->
                                             AdView(context).apply {
                                                 setAdSize(AdSize.BANNER)
-                                                //adUnitId = "ca-app-pub-3940256099942544/6300978111"
-                                                adUnitId = "ca-app-pub-1610338282405979/5516633215"
+                                                adUnitId = "ca-app-pub-3940256099942544/6300978111"
+                                                //adUnitId = "ca-app-pub-1610338282405979/5516633215"
                                                 loadAd(AdRequest.Builder().build())
                                             }
                                         })
@@ -438,11 +470,10 @@ fun NewsDetailScreenContent(
                                                 },
 
                                             columns = GridCells.Fixed(3)
-
                                         )
                                         {
 
-                                            itemsIndexed(news.oGallery.slideList) { _, slide ->
+                                            itemsIndexed(news.oGallery.slideList) { index, slide ->
 
                                                 val slideImageWidth =
                                                     dimensionResource(id = R.dimen.home_firstItemHeight)
@@ -459,7 +490,7 @@ fun NewsDetailScreenContent(
                                                         .fillMaxWidth()
                                                         .padding(5.dp)
                                                         .height(dimensionResource(id = R.dimen.home_firstItemHeight))
-                                                        .clickable { onSlideShowClick(news.oGallery) }
+                                                        .clickable { onSlideShowClick(index,news.oGallery) }
                                                 )
 
                                             }
@@ -478,8 +509,8 @@ fun NewsDetailScreenContent(
                                             }, factory = { context ->
                                             AdView(context).apply {
                                                 setAdSize(AdSize.MEDIUM_RECTANGLE)
-                                                // adUnitId = "ca-app-pub-3940256099942544/6300978111"
-                                                adUnitId = "ca-app-pub-1610338282405979/7021286572"
+                                                adUnitId = "ca-app-pub-3940256099942544/6300978111"
+                                                //adUnitId = "ca-app-pub-1610338282405979/7021286572"
                                                 loadAd(AdRequest.Builder().build())
                                             }
                                         })

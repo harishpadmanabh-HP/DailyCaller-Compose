@@ -61,7 +61,6 @@
         <activity
             android:name=".ui.splash.SplashActivity"
             android:exported="true"
-            android:screenOrientation="portrait"
             android:theme="@android:style/Theme.Translucent">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -72,7 +71,6 @@
         <activity
             android:name=".ui.home.HomeActivity"
             android:exported="true"
-            android:screenOrientation="portrait"
             android:theme="@style/Theme.DailyCaller" />
 
         <activity
@@ -84,14 +82,12 @@
         <activity
             android:name=".ui.search.SearchActivity"
             android:exported="true"
-            android:screenOrientation="portrait"
             android:theme="@style/Theme.DailyCaller" />
 
         <activity
             android:name=".ui.menu.LocalPlayerActivity"
             android:exported="true"
             android:launchMode="singleTask"
-            android:screenOrientation="portrait"
             android:theme="@style/Theme.DailyCaller" />
 
         <activity
@@ -103,19 +99,16 @@
         <activity
             android:name=".ui.newsDetail.SlideShowActivity"
             android:exported="true"
-            android:screenOrientation="portrait"
             android:theme="@style/Theme.DailyCaller" />
 
         <activity
             android:name=".ui.menu.MenuSectionActivity"
             android:exported="true"
-            android:screenOrientation="portrait"
             android:theme="@style/Theme.DailyCaller" />
         <activity
             android:name=".ui.deepLinking.DeepLinkingActivity"
             android:exported="true"
             android:launchMode="singleTask"
-            android:screenOrientation="portrait"
             android:theme="@style/Theme.DailyCaller">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
@@ -131,13 +124,11 @@
         <activity
             android:name=".ui.comment.CommentActivity"
             android:exported="true"
-            android:screenOrientation="portrait"
             android:theme="@style/Theme.DailyCaller" />
 
         <activity
             android:name=".ui.networknotfound.NetworkNotFoundActivity"
             android:exported="true"
-            android:screenOrientation="portrait"
             android:theme="@style/Theme.DailyCaller" />
 
         <activity
@@ -145,7 +136,6 @@
             android:exported="true"
             android:label="@string/app_name"
             android:launchMode="singleTask"
-            android:screenOrientation="portrait"
             android:theme="@style/Theme.DailyCaller">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

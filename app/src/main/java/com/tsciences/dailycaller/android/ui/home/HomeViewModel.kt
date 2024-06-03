@@ -82,11 +82,11 @@ class HomeViewModel @Inject constructor(
         onRequest = { page ->
             if (tabName.equals("Home")) {
                 repo.getFullNewsList(
-                    pageId = page, maxPosts = 11
+                    pageId = page, maxPosts = 75
                 )
             } else {
                 repo.getSectionNewsList(
-                    type = tabName.toString(), pageId = page, maxPosts = 11
+                    type = tabName.toString(), pageId = page, maxPosts = 75
                 )
             }
         },

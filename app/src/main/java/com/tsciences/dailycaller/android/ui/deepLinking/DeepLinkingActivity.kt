@@ -2,6 +2,7 @@ package com.tsciences.dailycaller.android.ui.deepLinking
 
 import android.app.Activity
 import android.content.Intent
+import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -13,6 +14,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.zIndex
 import com.tsciences.dailycaller.android.application.DailyCallerApplication
+import com.tsciences.dailycaller.android.core.util.isDeviceTablet
 import com.tsciences.dailycaller.android.ui.commonComponents.LoadingOverlay
 import com.tsciences.dailycaller.android.ui.menu.LocalPlayerActivity
 import com.tsciences.dailycaller.android.ui.newsDetail.NewsDetailActivity
@@ -24,6 +26,11 @@ class DeepLinkingActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
+            if (isDeviceTablet(this)) {
+                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR)
+            } else {
+                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
+            }
             AnimatedVisibility(
                 visible = true, enter = fadeIn(), exit = fadeOut(), modifier = Modifier.zIndex(1f)
             ) {

@@ -2,6 +2,7 @@ package com.tsciences.dailycaller.android.ui.menu
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.content.pm.ActivityInfo
 import android.content.res.Configuration
 import android.graphics.Point
 import android.media.MediaPlayer
@@ -83,6 +84,12 @@ class FullScreenPlayerActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.fullscreen_player_activity)
+
+       /* if (isDeviceTablet(this)) {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR)
+        } else {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
+        }*/
 
         loadViews()
         setupControlsCallbacks()

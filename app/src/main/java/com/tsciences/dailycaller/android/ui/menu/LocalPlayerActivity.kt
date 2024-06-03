@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.content.pm.ActivityInfo
 import android.content.res.Configuration
 import android.graphics.Point
 import android.media.MediaPlayer
@@ -156,7 +157,7 @@ class LocalPlayerActivity : AppCompatActivity() {
         PLAYING, PAUSED, BUFFERING, IDLE
     }
 
-    override fun onNewIntent(intent: Intent?) {
+    override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         Composer.getInstance().userToken("")
         if (intent != null) {
@@ -176,6 +177,12 @@ class LocalPlayerActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.player_activity)
+
+        if (isDeviceTablet(this)) {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR)
+        } else {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
+        }
         Composer.getInstance().userToken("")
         dailyCallerApplication = this.applicationContext as DailyCallerApplication
         loadViews()
