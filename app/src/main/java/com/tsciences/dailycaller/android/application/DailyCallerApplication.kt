@@ -4,6 +4,7 @@ import android.app.Activity
 import android.app.Application
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import com.facebook.FacebookSdk
 import com.google.android.gms.ads.MobileAds
 import com.onesignal.OneSignal
@@ -20,6 +21,8 @@ import io.piano.android.composer.Composer
 import io.piano.android.id.PianoId
 import io.piano.android.id.facebook.FacebookOAuthProvider
 import io.piano.android.id.google.GoogleOAuthProvider
+import io.piano.android.id.models.PianoIdAuthFailureResult
+import io.piano.android.id.models.PianoIdAuthSuccessResult
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -47,9 +50,9 @@ class DailyCallerApplication : Application() {
         FacebookSdk.setClientToken(BuildConfig.FACEBOOK_CLIENT_TOKEN)
         FacebookSdk.sdkInitialize(this.applicationContext)
         PianoId.init(PianoId.ENDPOINT_PRODUCTION, BuildConfig.PIANO_AID)
-        PianoId.init(PianoId.ENDPOINT_PRODUCTION, BuildConfig.PIANO_AID)
+            .with(GoogleOAuthProvider())
             .with(FacebookOAuthProvider())
-        PianoId.init(PianoId.ENDPOINT_PRODUCTION, BuildConfig.PIANO_AID).with(GoogleOAuthProvider())
+
         SpotIm.init(this, BuildConfig.SPOT_IM_ID)
 
         //OneSignal

@@ -269,6 +269,7 @@ dependencies {
 //    implementation 'io.piano.android:id-oauth-google:2.10.0'
 //    implementation 'io.piano.android:oauth:2.10.0'
 
+    implementation("io.piano.android:id:2.10.0")
     implementation("io.piano.android:id-oauth-google:2.10.0")
     implementation("io.piano.android:id-oauth-facebook:2.10.0")
 
