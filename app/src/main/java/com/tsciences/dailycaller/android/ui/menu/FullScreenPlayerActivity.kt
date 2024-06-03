@@ -146,7 +146,8 @@ class FullScreenPlayerActivity : AppCompatActivity() {
 
                     setupActionBar()
 
-                    val shouldStartPlayback = bundle.getBoolean("shouldStart")
+                 //   val shouldStartPlayback = bundle.getBoolean("shouldStart")
+                    val shouldStartPlayback = true
                     val startPosition = bundle.getInt("startPosition", 0)
                     mVideoView!!.setVideoURI(Uri.parse(mSelectedMedia!!.contentId))
 
@@ -601,9 +602,11 @@ class FullScreenPlayerActivity : AppCompatActivity() {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
                 window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_VISIBLE
             }
-            updateMetadata(true)
+            updateMetadata(false)
             mContainer!!.setBackgroundColor(resources.getColor(R.color.white))
         }
+        Log.d(TAG, "onConfigurationChanged() --playback state $mPlaybackState , current position ${mVideoView?.currentPosition}")
+
     }
 
     private fun updateMetadata(visible: Boolean) {
@@ -649,8 +652,8 @@ class FullScreenPlayerActivity : AppCompatActivity() {
 
     private fun setupActionBar() {
         val toolbar = findViewById<View>(R.id.toolbar) as Toolbar
-        toolbar.title =
-            mSelectedMedia!!.metadata!!.getString(MediaMetadata.KEY_TITLE)
+        toolbar.title = ""
+           // mSelectedMedia!!.metadata!!.getString(MediaMetadata.KEY_TITLE)
         setSupportActionBar(toolbar)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
     }

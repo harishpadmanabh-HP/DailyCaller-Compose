@@ -627,11 +627,13 @@ class LocalPlayerActivity : AppCompatActivity() {
     }
 
     private fun showLoginAlert(context: Context) {
-        val builder = AlertDialog.Builder(this)
+        Toast.makeText(this,"You do not have permission to watch this video. Kindly log in using another account",Toast.LENGTH_LONG).show()
+        executeComposer()
+
+        /*val builder = AlertDialog.Builder(this)
         builder.setTitle("Permission Denied")
             .setMessage("You do not have permission to watch this video. Kindly log in using another account")
         builder.setPositiveButton("Use Another Account") { dialog, which ->
-            executeComposer()
             dialog.dismiss()
         }
         builder.setNegativeButton("Cancel") { dialog, which ->
@@ -639,7 +641,7 @@ class LocalPlayerActivity : AppCompatActivity() {
         }
 
         val dialog: AlertDialog = builder.create()
-        dialog.show()
+        dialog.show()*/
     }
 
     private fun setupControlsCallbacks() {

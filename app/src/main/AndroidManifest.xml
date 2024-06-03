@@ -94,6 +94,7 @@
             android:name=".ui.menu.FullScreenPlayerActivity"
             android:exported="true"
             android:launchMode="singleTask"
+            android:screenOrientation="landscape"
             android:theme="@style/Theme.DailyCaller" />
 
         <activity
