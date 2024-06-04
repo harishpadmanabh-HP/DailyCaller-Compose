@@ -276,7 +276,7 @@ fun NewsDetailScreenContent(
                                         Text(text = titletxt,
                                             modifier = Modifier
                                                 .constrainAs(title) {
-                                                    top.linkTo(categoryTag.bottom, 16.dp)
+                                                    top.linkTo(authorImage.bottom, 16.dp)
                                                     start.linkTo(parent.start)
                                                     end.linkTo(parent.end)
                                                 }

@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.content.pm.ActivityInfo
 import android.content.res.Configuration
 import android.graphics.Point
 import android.media.MediaPlayer
@@ -15,30 +14,19 @@ import android.os.Handler
 import android.os.Looper
 import android.text.method.ScrollingMovementMethod
 import android.util.Log
-import android.view.KeyEvent
-import android.view.Menu
-import android.view.MenuItem
-import android.view.View
-import android.view.WindowManager
+import android.view.*
 import android.webkit.JavascriptInterface
-import android.widget.ImageButton
-import android.widget.ImageView
-import android.widget.RelativeLayout
-import android.widget.SeekBar
+import android.widget.*
 import android.widget.SeekBar.OnSeekBarChangeListener
-import android.widget.TextView
-import android.widget.Toast
-import android.widget.VideoView
 import androidx.activity.viewModels
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.DialogFragment
 import com.airbnb.lottie.LottieAnimationView
-import com.google.android.gms.cast.MediaInfo
-import com.google.android.gms.cast.MediaLoadRequestData
-import com.google.android.gms.cast.MediaMetadata
-import com.google.android.gms.cast.MediaSeekOptions
+import com.google.android.gms.cast.*
 import com.google.android.gms.cast.framework.CastButtonFactory
 import com.google.android.gms.cast.framework.CastContext
 import com.google.android.gms.cast.framework.CastSession
@@ -50,15 +38,10 @@ import com.squareup.picasso.Picasso
 import com.tsciences.dailycaller.android.FirebaseAnalyticsEvent.EventRegister
 import com.tsciences.dailycaller.android.R
 import com.tsciences.dailycaller.android.application.DailyCallerApplication
-import com.tsciences.dailycaller.android.core.util.formatMillis
-import com.tsciences.dailycaller.android.core.util.getDisplaySize
-import com.tsciences.dailycaller.android.core.util.isDeviceTablet
-import com.tsciences.dailycaller.android.core.util.isOrientationPortrait
-import com.tsciences.dailycaller.android.core.util.showErrorDialog
-import com.tsciences.dailycaller.android.core.util.showQueuePopup
+import com.tsciences.dailycaller.android.core.util.*
+import com.tsciences.dailycaller.android.utils.ResizeTransformation
 import com.tsciences.dailycaller.android.utils.stripHtml
-import com.vimeo.networking2.Play
-import com.vimeo.networking2.ProgressiveVideoFile
+import com.vimeo.networking2.*
 import dagger.hilt.android.AndroidEntryPoint
 import io.piano.android.composer.Composer
 import io.piano.android.composer.listeners.EventTypeListener
@@ -77,8 +60,7 @@ import io.piano.android.id.models.PianoIdAuthFailureResult
 import io.piano.android.id.models.PianoIdAuthSuccessResult
 import org.json.JSONException
 import org.json.JSONObject
-import java.util.Timer
-import java.util.TimerTask
+import java.util.*
 import java.util.concurrent.Executor
 import java.util.concurrent.Executors
 
@@ -87,7 +69,7 @@ class LocalPlayerActivity : AppCompatActivity() {
     private var animationView: LottieAnimationView? = null
     private var mVideoView: VideoView? = null
     private var watchNowBtn: TextView? = null
-    private var mVideoThumbnail: ImageView? = null
+    private var mVideoThumbnail: AppCompatImageView? = null
     private var mTitleView: TextView? = null
     private var mDescriptionView: TextView? = null
     private var mStartText: TextView? = null
@@ -119,12 +101,12 @@ class LocalPlayerActivity : AppCompatActivity() {
     protected var dailyCallerApplication: DailyCallerApplication? = null
     private var goFullScreen: ImageView? = null
 
+
     val authResult = registerForActivityResult(PianoIdAuthResultContract()) { result ->
         when (result) {
             null -> {
                 Toast.makeText(this, "Login cancel", Toast.LENGTH_SHORT).show()
             }
-
             is PianoIdAuthSuccessResult -> {
                 val token = result.token
 
@@ -153,7 +135,6 @@ class LocalPlayerActivity : AppCompatActivity() {
                     checkUserAccess(token.accessToken)
                 }
             }
-
             is PianoIdAuthFailureResult -> {
                 val e = result.exception
                 Toast.makeText(this, e.cause?.message, Toast.LENGTH_SHORT).show()
@@ -199,12 +180,6 @@ class LocalPlayerActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.player_activity)
-
-        if (isDeviceTablet(this)) {
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR)
-        } else {
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
-        }
         Composer.getInstance().userToken("")
         dailyCallerApplication = this.applicationContext as DailyCallerApplication
         loadViews()
@@ -333,8 +308,6 @@ class LocalPlayerActivity : AppCompatActivity() {
                 )
             }
         }
-
-
     }
 
     private fun clearReferences() {
@@ -453,7 +426,6 @@ class LocalPlayerActivity : AppCompatActivity() {
                 mVideoView!!.seekTo(position)
                 mVideoView!!.start()
             }
-
             PlaybackLocation.REMOTE -> {
                 mPlaybackState = PlaybackState.BUFFERING
                 updatePlayButton(mPlaybackState)
@@ -461,7 +433,6 @@ class LocalPlayerActivity : AppCompatActivity() {
                     MediaSeekOptions.Builder().setPosition(position.toLong()).build()
                 )
             }
-
             else -> {}
         }
         restartTrickplayTimer()
@@ -479,20 +450,16 @@ class LocalPlayerActivity : AppCompatActivity() {
                     restartTrickplayTimer()
                     updatePlaybackLocation(PlaybackLocation.LOCAL)
                 }
-
                 PlaybackLocation.REMOTE -> {
                     loadRemoteMedia(0, true)
                     finish()
                 }
-
                 else -> {}
             }
-
             PlaybackState.PLAYING -> {
                 mPlaybackState = PlaybackState.PAUSED
                 mVideoView!!.pause()
             }
-
             PlaybackState.IDLE -> when (mLocation) {
                 PlaybackLocation.LOCAL -> {
                     mVideoView!!.setVideoURI(Uri.parse(mSelectedMedia!!.contentId))
@@ -502,14 +469,11 @@ class LocalPlayerActivity : AppCompatActivity() {
                     restartTrickplayTimer()
                     updatePlaybackLocation(PlaybackLocation.LOCAL)
                 }
-
                 PlaybackLocation.REMOTE -> if (mCastSession != null && mCastSession!!.isConnected) {
                     showQueuePopup(this, mPlayCircle, mSelectedMedia)
                 }
-
                 else -> {}
             }
-
             else -> {}
         }
         updatePlayButton(mPlaybackState)
@@ -536,7 +500,9 @@ class LocalPlayerActivity : AppCompatActivity() {
     private fun setCoverArtStatus(url: String?) {
         if (url != null) {
             mVideoThumbnail!!.visibility = View.VISIBLE
-            Picasso.with(this).load(Uri.parse(url)).into(mVideoThumbnail)
+            Picasso.with(this).load(Uri.parse(url))
+                .transform(ResizeTransformation(2400)) //FHD+ resolution
+                .into(mVideoThumbnail)
             mVideoView!!.visibility = View.INVISIBLE
         } else {
             mVideoThumbnail!!.visibility = View.GONE
@@ -581,10 +547,10 @@ class LocalPlayerActivity : AppCompatActivity() {
             supportActionBar!!.show()
             mControllers!!.visibility = View.VISIBLE
         } else {
-            if (isOrientationPortrait(this)) {
+           /* if (isOrientationPortrait(this)) {
                 supportActionBar!!.hide()
             }
-            mControllers!!.visibility = View.INVISIBLE
+            mControllers!!.visibility = View.INVISIBLE*/
         }
     }
 
@@ -675,11 +641,11 @@ class LocalPlayerActivity : AppCompatActivity() {
             Toast.LENGTH_LONG
         ).show()
         executeComposer()
-
-        /*val builder = AlertDialog.Builder(this)
+       /* val builder = AlertDialog.Builder(this)
         builder.setTitle("Permission Denied")
             .setMessage("You do not have permission to watch this video. Kindly log in using another account")
         builder.setPositiveButton("Use Another Account") { dialog, which ->
+            executeComposer()
             dialog.dismiss()
         }
         builder.setNegativeButton("Cancel") { dialog, which ->
@@ -781,14 +747,12 @@ class LocalPlayerActivity : AppCompatActivity() {
                 )
                 mPlayCircle!!.visibility = if (isConnected) View.VISIBLE else View.GONE
             }
-
             PlaybackState.IDLE -> {
                 animationView!!.visibility = View.VISIBLE
                 mPlayCircle!!.visibility = View.VISIBLE
                 mControllers!!.visibility = View.GONE
                 mVideoView!!.visibility = View.INVISIBLE
             }
-
             PlaybackState.PAUSED -> {
                 animationView!!.visibility = View.INVISIBLE
                 mPlayPause!!.visibility = View.VISIBLE
@@ -797,12 +761,10 @@ class LocalPlayerActivity : AppCompatActivity() {
                 )
                 mPlayCircle!!.visibility = if (isConnected) View.VISIBLE else View.GONE
             }
-
             PlaybackState.BUFFERING -> {
                 animationView?.playAnimation()
                 mPlayPause!!.visibility = View.INVISIBLE
             }
-
             else -> {}
         }
     }
@@ -905,7 +867,7 @@ class LocalPlayerActivity : AppCompatActivity() {
         animationView = findViewById<LottieAnimationView>(R.id.animation_view)
         mVideoView = findViewById<View>(R.id.videoView1) as VideoView
         watchNowBtn = findViewById<View>(R.id.watchNowBtn) as TextView
-        mVideoThumbnail = findViewById<View>(R.id.videoThumbnail) as ImageView
+        mVideoThumbnail = findViewById<View>(R.id.videoThumbnail) as AppCompatImageView
         mTitleView = findViewById<View>(R.id.titleTextView) as TextView
         mDescriptionView = findViewById<View>(R.id.descriptionTextView) as TextView
         mDescriptionView!!.movementMethod = ScrollingMovementMethod()
@@ -921,8 +883,7 @@ class LocalPlayerActivity : AppCompatActivity() {
         mPlayCircle!!.setOnClickListener { togglePlayback() }
         goFullScreen = findViewById<View>(R.id.goFullScreen) as ImageView
     }
-
-    fun openPromoVideoInFullScreen(
+    private fun openPromoVideoInFullScreen(
         promoVideoId: String?,
         description: String?,
         title: String?,
@@ -937,9 +898,7 @@ class LocalPlayerActivity : AppCompatActivity() {
         intent.putExtra("image", image)
         startActivity(intent)
     }
-
     companion object {
         private const val TAG = "LocalPlayerActivity"
     }
 }
-

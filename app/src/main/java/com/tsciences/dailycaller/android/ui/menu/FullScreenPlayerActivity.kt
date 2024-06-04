@@ -378,10 +378,10 @@ class FullScreenPlayerActivity : AppCompatActivity() {
             supportActionBar!!.show()
             mControllers!!.visibility = View.VISIBLE
         } else {
-            if (isOrientationPortrait(this)) {
+          /*  if (isOrientationPortrait(this)) {
                 supportActionBar!!.hide()
             }
-            mControllers!!.visibility = View.INVISIBLE
+            mControllers!!.visibility = View.INVISIBLE*/
         }
     }
 
