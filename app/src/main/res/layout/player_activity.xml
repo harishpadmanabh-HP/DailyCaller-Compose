@@ -100,7 +100,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_alignParentEnd="true"
-                android:layout_marginEnd="16dp"
+                android:layout_marginEnd="36dp"
                 android:gravity="center_vertical"
                 android:maxLines="1"
                 android:text="0:00"
@@ -117,6 +117,19 @@
                 android:layout_toStartOf="@+id/endText"
                 android:layout_toEndOf="@+id/startText"
                 android:indeterminateTint="@color/teal_700"/>
+
+            <ImageView
+                android:id="@+id/goFullScreen"
+                android:layout_width="wrap_content"
+                android:layout_height="20dp"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentBottom="true"
+                android:layout_marginStart="-28dp"
+                android:layout_marginTop="2dp"
+                android:layout_toEndOf="@+id/endText"
+                android:contentDescription="fullScreen"
+                android:src="@drawable/common_full_open_on_phone" />
         </RelativeLayout>
     </RelativeLayout>
     <TextView

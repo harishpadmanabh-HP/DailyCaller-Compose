@@ -1,5 +1,6 @@
 package com.tsciences.dailycaller.android.ui.menu
 
+import android.content.Intent
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -121,6 +122,8 @@ class MediaRouteViewModel @Inject constructor(
         }
         return hasAccess
     }
+
+
 
     sealed class StreamEvent {
         data class ShowUiMessage(val uiText: UiText) : StreamEvent()

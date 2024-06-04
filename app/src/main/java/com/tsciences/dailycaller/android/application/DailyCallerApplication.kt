@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.util.Log
 import com.facebook.FacebookSdk
 import com.google.android.gms.ads.MobileAds
+import com.google.firebase.FirebaseApp
 import com.onesignal.OneSignal
 import com.onesignal.debug.LogLevel
 import com.onesignal.notifications.INotificationClickEvent
@@ -44,6 +45,7 @@ class DailyCallerApplication : Application() {
         super.onCreate()
 
         mInstance = this
+        FirebaseApp.initializeApp(this)
 
         MobileAds.initialize(this)
         Composer.init(this, BuildConfig.PIANO_AID)
@@ -79,6 +81,30 @@ class DailyCallerApplication : Application() {
         }
         OneSignal.Notifications.addClickListener(clickListener)
         OneSignal.Notifications.removeClickListener(clickListener)
+
+        registerActivityLifecycleCallbacks(object : ActivityLifecycleCallbacks {
+            override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
+            }
+
+            override fun onActivityStarted(activity: Activity) {
+            }
+
+            override fun onActivityResumed(activity: Activity) {
+                Log.d("CurrentActivity", "Resumed: ${activity.javaClass.simpleName}")
+            }
+
+            override fun onActivityPaused(activity: Activity) {
+            }
+
+            override fun onActivityStopped(activity: Activity) {
+            }
+
+            override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) {
+            }
+
+            override fun onActivityDestroyed(activity: Activity) {
+            }
+        })
     }
 
     fun notificationOpened(data: JSONObject) {
